@@ -6,6 +6,7 @@ require 'decors'
 Gem::Specification.new do |gem|
     gem.name          = "decors"
     gem.version       = ::Decors::VERSION
+    gem.licenses      = ['MIT']
     gem.authors       = ['Vivien Meyet']
     gem.email         = ['vivien@getbannerman.com']
     gem.description   = "Ruby implementation of Python method decorators / Java annotations"

@@ -2,3 +2,4 @@
 .rspec
 .rubocop.yml
 *.gem
+README.html
