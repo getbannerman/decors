@@ -310,6 +310,48 @@ describe Decors do
             after { TestClass.test_method }
         end
 
+        context 'when mixin extended on the class (singleton method in singleton class)' do
+            before {
+                TestClass.class_eval {
+                    class << self
+                        extend Decors::DecoratorDefinition
+
+                        define_decorator :Deco, Deco
+
+                        Deco()
+                        def self.test_method
+                            :ok
+                        end
+                    end
+                }
+            }
+
+            it { expect(Spy).to receive(:called) }
+            after { TestClass.singleton_class.test_method }
+        end
+
+        context 'when mixin extended on the class (method in singleton class of singleton class)' do
+            before {
+                TestClass.class_eval {
+                    class << self
+                        class << self
+                            extend Decors::DecoratorDefinition
+
+                            define_decorator :Deco, Deco
+
+                            Deco()
+                            def test_method
+                                :ok
+                            end
+                        end
+                    end
+                }
+            }
+
+            it { expect(Spy).to receive(:called) }
+            after { TestClass.singleton_class.test_method }
+        end
+
         context 'when mixin extended on the class (method in singleton class)' do
             before {
                 TestClass.class_eval {
@@ -366,4 +408,3 @@ describe Decors do
         end
     end
 end
-
