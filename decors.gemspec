@@ -18,6 +18,6 @@ Gem::Specification.new do |gem|
     gem.test_files    = gem.files.grep(%r{^spec/})
     gem.require_paths = ['lib']
 
-    gem.add_development_dependency 'pry-byebug', '~> 0'
+    gem.add_development_dependency 'pry', '~> 0'
     gem.add_development_dependency 'rspec', '~> 0'
 end
