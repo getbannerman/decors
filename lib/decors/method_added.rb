@@ -37,19 +37,23 @@ module Decors
             end
         end
 
-        module ForwardToSingletonListener
-            def singleton_method_added(meth)
-                super
-                singleton_class.send(:handle_method_addition, singleton_class, meth)
-            end
-        end
-
         module SingletonListener
             include ::Decors::MethodAdded::Handler
 
             def singleton_method_added(meth)
                 super
                 handle_method_addition(singleton_class, meth)
+            end
+
+            def self.extended(base)
+                ObjectSpace.each_object(base).first.send(:extend, ForwardToSingletonListener)
+            end
+
+            module ForwardToSingletonListener
+                def singleton_method_added(meth)
+                    super
+                    singleton_class.send(:handle_method_addition, singleton_class, meth)
+                end
             end
         end
     end
