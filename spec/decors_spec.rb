@@ -64,6 +64,25 @@ describe Decors do
                 instance.test_method_not_decorated
             }
         end
+
+        context 'It keep the method visibility' do
+            before {
+                TestClass.class_eval {
+                    SimpleDecorator()
+                    public def public_test_method(*); end
+
+                    SimpleDecorator()
+                    private def private_test_method(*); end
+
+                    SimpleDecorator()
+                    protected def protected_test_method(*); end
+                }
+            }
+
+            it { expect(TestClass).to be_public_method_defined(:public_test_method) }
+            it { expect(TestClass).to be_protected_method_defined(:protected_test_method) }
+            it { expect(TestClass).to be_private_method_defined(:private_test_method) }
+        end
     end
 
     context 'when decorator is defining a method during initialization' do
