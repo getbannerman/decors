@@ -7,12 +7,25 @@ GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.1)
+    diff-lcs (1.3)
     method_source (0.8.2)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    rspec (0.9.4)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.4)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
     slop (3.6.0)
 
 PLATFORMS
@@ -20,8 +33,8 @@ PLATFORMS
 
 DEPENDENCIES
   decors!
-  pry (~> 0)!
-  rspec (~> 0)!
+  pry!
+  rspec (~> 3)!
 
 RUBY VERSION
    ruby 2.3.1p112
