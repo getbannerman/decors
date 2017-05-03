@@ -1,3 +1,5 @@
+require 'decors/utils'
+
 module Decors
     module MethodAdded
         module Handler
@@ -20,6 +22,7 @@ module Decors
                 @_ignore_additions = false
 
                 clazz.send(:define_method, method_name) { |*args, &block| decorator.call(self, *args, &block) }
+                clazz.send(Decors::Utils.method_visibility(decorated_method), method_name)
             end
         end
 
