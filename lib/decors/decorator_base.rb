@@ -1,9 +1,11 @@
 module Decors
     class DecoratorBase
-        attr_reader :decorated_class, :decorated_method, :decorator_args, :decorator_kwargs, :decorator_block
+        attr_reader :decorated_class, :undecorated_method, :decorated_method, :decorator_args,
+            :decorator_kwargs, :decorator_block
 
-        def initialize(decorated_class, decorated_method, *args, **kwargs, &block)
+        def initialize(decorated_class, undecorated_method, decorated_method, *args, **kwargs, &block)
             @decorated_class = decorated_class
+            @undecorated_method = undecorated_method
             @decorated_method = decorated_method
             @decorator_args = args
             @decorator_kwargs = kwargs
@@ -15,7 +17,7 @@ module Decors
         end
 
         def undecorated_call(instance, *args, &block)
-            decorated_method.bind(instance).call(*args, &block)
+            undecorated_method.bind(instance).call(*args, &block)
         end
 
         def decorated_method_name
