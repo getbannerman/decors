@@ -5,6 +5,10 @@ module Decors
         module Handler
             private
 
+            METHOD_CALLED_TOO_EARLY_HANDLER = ->(*) {
+                raise 'You cannot call a decorated method before its decorator is initialized'
+            }
+
             def declared_decorators
                 @declared_decorators ||= []
             end
@@ -15,14 +19,14 @@ module Decors
                 return if @_ignore_additions || declared_decorators.empty?
                 decorator_class, params, blk = declared_decorators.pop
 
-                decorated_method = clazz.instance_method(method_name)
-
-                @_ignore_additions = true
-                decorator = decorator_class.new(clazz, decorated_method, *params, &blk)
-                @_ignore_additions = false
-
+                undecorated_method = clazz.instance_method(method_name)
+                decorator = METHOD_CALLED_TOO_EARLY_HANDLER
                 clazz.send(:define_method, method_name) { |*args, &block| decorator.call(self, *args, &block) }
-                clazz.send(Decors::Utils.method_visibility(decorated_method), method_name)
+                decorated_method = clazz.instance_method(method_name)
+                @_ignore_additions = true
+                decorator = decorator_class.new(clazz, undecorated_method, decorated_method, *params, &blk)
+                @_ignore_additions = false
+                clazz.send(Decors::Utils.method_visibility(undecorated_method), method_name)
             end
         end
 

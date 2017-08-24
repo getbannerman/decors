@@ -12,10 +12,37 @@ describe Decors do
         }
     }
 
+    context 'Check decorated_method & undecorated_method' do
+        let(:instance) { TestClass.new }
+
+        before {
+            stub_class(:SimpleDecorator, inherits: [::Decors::DecoratorBase])
+            call_method = call_proc
+            SimpleDecorator.send(:define_method, :call){ |*| instance_eval(&call_method) }
+            TestClass.class_eval {
+                define_decorator :SimpleDecorator, SimpleDecorator
+                SimpleDecorator()
+                def test; 42 end
+            }
+        }
+
+        context 'Check decorated_method value' do
+            let(:call_proc) { proc { decorated_method } }
+            it { expect(instance.test).to eq TestClass.instance_method(:test) }
+        end
+
+        context 'Check undecorated_method value' do
+            let(:call_proc) { proc { undecorated_method } }
+            it { expect(instance.test.bind(instance).call).to eq 42 }
+            it { expect(instance.test.bind(instance).call).not_to eq TestClass.instance_method(:test) }
+
+        end
+    end
+
     context 'when simple case decorator' do
         before {
             stub_class(:SimpleDecorator, inherits: [::Decors::DecoratorBase]) {
-                def initialize(decorated_class, decorated_method, *deco_args, **deco_kwargs, &deco_block)
+                def initialize(decorated_class, undecorated_method, decorated_method, *deco_args, **deco_kwargs, &deco_block)
                     super
                     Spy.passed_args(*deco_args, **deco_kwargs, &deco_block)
                 end
@@ -30,7 +57,7 @@ describe Decors do
         }
 
         context 'It receive all the parameters at initialization' do
-            it { expect(SimpleDecorator).to receive(:new).with(TestClass, anything, 1, 2, a: 3).and_call_original }
+            it { expect(SimpleDecorator).to receive(:new).with(TestClass, anything, anything, 1, 2, a: 3).and_call_original }
             it { expect(Spy).to receive(:arguments).with(args: [1, 2], kwargs: { a: 3 }, evald_block: 'ok') }
 
             after {
@@ -88,7 +115,7 @@ describe Decors do
     context 'when decorator is defining a method during initialization' do
         before {
             stub_class(:StrangeDecorator, inherits: [::Decors::DecoratorBase]) {
-                def initialize(decorated_class, decorated_method, *deco_args, **deco_kwargs, &deco_block)
+                def initialize(decorated_class, undecorated_method, decorated_method, *deco_args, **deco_kwargs, &deco_block)
                     super
                     decorated_class.send(:define_method, :foo) { 42 }
                 end
